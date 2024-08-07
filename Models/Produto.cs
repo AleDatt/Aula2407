@@ -3,11 +3,11 @@
     public class Produto
     {
         public int Id { get; set; }
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
         public int Quantidade { get; set; }
-        public string Marca { get; set; }
-        public string Tamanho { get; set; }
-        public string DataValidade { get; set;}
+        public string Marca { get; set; } = string.Empty;
+        public string Tamanho { get; set; } = string.Empty;
+        public string DataValidade { get; set;} = string.Empty;
         public decimal ValorUnitario { get; set;}
     }
 }

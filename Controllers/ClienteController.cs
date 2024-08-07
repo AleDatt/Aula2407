@@ -3,6 +3,7 @@ using Aula2407.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Aula2407.Controllers
 {
     public class ClienteController : Controller
@@ -13,6 +14,14 @@ namespace Aula2407.Controllers
         {
             _context = context;
         }
+
+       //BUSCAR CLIENTES
+        public async Task<IActionResult> BuscaClientes()
+        {
+            return View(await _context.Clientes.ToListAsync());
+        }
+
+        //CADASTRO DE CLIENTES
         public IActionResult CadastroCliente()
         {
             return View();
@@ -26,7 +35,7 @@ namespace Aula2407.Controllers
             {
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "NossoApp");
+                return RedirectToAction("BuscaClientes");
             }
             return View(cliente);
         }
