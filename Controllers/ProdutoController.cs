@@ -16,14 +16,33 @@ namespace Aula2407.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> BuscaProdutos()
+        public async Task<IActionResult> BuscaProdutos(int pagina = 1)
         {
-            return View(await _context.Produtos.ToListAsync());
+            var QtdeTProdutos = 2;
+
+            var items = await _context.Produtos.OrderBy(c => c.Nome).ToListAsync();
+            // var pagedItems = items.Skip((pagina - 1) * QtdeTProdutos).Take(QtdeTClientes).ToList();
+
+            //Passando os dados e informações de paginação para a view
+            ViewBag.QtdePaginas = (int)Math.Ceiling((double)items.Count / QtdeTProdutos);
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.QtdeTProdutos = QtdeTProdutos;
+
+            return View(items);
+            //return View(await _context.Clientes.TolistAsync());
+
         }
 
-        public IActionResult CadastroProduto()
+        public async Task<IActionResult> CadastroProduto(int? id)
         {
-            return View();
+            if(id  == null)
+            {
+                return View();
+            }
+           else
+            {
+                return View(await _context.Produtos.FindAsync(id));
+            }
         }
 
         [HttpPost]
@@ -34,13 +53,45 @@ namespace Aula2407.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(produto);
-                await _context.SaveChangesAsync();
+                if (produto.Id != 0)
+                {
+                    _context.Update(produto);
+                    await _context.SaveChangesAsync();
+                    TempData["msg"] = "2";
+                }
+
+
+                else
+                {
+                    _context.Add(produto);
+                    await _context.SaveChangesAsync();
+                    TempData["msg"] = "1";
+                }
+
                 return RedirectToAction("BuscaProdutos");
             }
             return View(produto);
         }
 
+        public async Task<IActionResult> DetalhesProduto(int Id)
+        {
+            return View(await _context.Produtos.FindAsync(Id));
+        }
+
+        public async Task<IActionResult> DeletarProdutos(int Id)
+        {
+            if (Id != 0)
+            {
+                var produto = await _context.Produtos.FindAsync(Id);
+
+                if (produto != null)
+                
+                    _context.Remove<Produto>(produto);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("BuscaProdutos");
+            }
+            return RedirectToAction("BuscaProdutos");
+        }
     }
 }
 
@@ -48,7 +99,7 @@ namespace Aula2407.Controllers
 
 
 
-  
 
-       
-        
+
+
+      
